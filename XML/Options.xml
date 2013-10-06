@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created by ModBuddy on 4/21/2012 1:23:56 AM -->
+<GameData>
+	<GameOptions>
+		<Row>
+			<Type>GAMEOPTION_TILE_FLIPPING</Type>
+			<Description>TXT_KEY_GAME_OPTION_TILE_FLIPPING</Description>
+			<Help>TXT_KEY_GAME_OPTION_TILE_FLIPPING_HELP</Help>
+		</Row>
+		<Row>
+			<Type>GAMEOPTION_CIV4_SPREADING</Type>
+			<Description>TXT_KEY_GAME_OPTION_CIV4_SPREADING</Description>
+			<Help>TXT_KEY_GAME_OPTION_CIV4_SPREADING_HELP</Help>
+		</Row>
+		<Row>
+			<Type>GAMEOPTION_TILE_CONQUEST</Type>
+			<Description>TXT_KEY_GAME_OPTION_TILE_CONQUEST</Description>
+			<Help>TXT_KEY_GAME_OPTION_TILE_CONQUEST_HELP</Help>
+		</Row>
+		<Row>
+			<Type>GAMEOPTION_DYNHIST_USE_POLICIES</Type>
+			<Description>TXT_KEY_GAME_OPTION_DYNHIST_USE_POLICIES</Description>
+			<Help>TXT_KEY_GAME_OPTION_DYNHIST_USE_POLICIES_HELP</Help>
+		</Row>
+	</GameOptions>
+	<Language_en_US>
+		<Row Tag="TXT_KEY_GAME_OPTION_CIV4_SPREADING">
+			<Text>Cultural Diffusion: Acquire Tile</Text>
+		</Row>
+		<Row Tag="TXT_KEY_GAME_OPTION_CIV4_SPREADING_HELP">
+			<Text>An unowned tile can be acquired by a civilization, based on it's culture value. The tile must be in range of one of the civilization cities (6 tiles distance by default)</Text>
+		</Row>
+		<Row Tag="TXT_KEY_GAME_OPTION_TILE_FLIPPING">
+			<Text>Cultural Diffusion: Flip Tile</Text>
+		</Row>
+		<Row Tag="TXT_KEY_GAME_OPTION_TILE_FLIPPING_HELP">
+			<Text>A owned tile can change ownership based on the ratio of it's culture values. The tile must be in range of one of the new owner's cities (6 tiles distance by default)</Text>
+		</Row>
+		<Row Tag="TXT_KEY_GAME_OPTION_TILE_CONQUEST">
+			<Text>Cultural Diffusion: Tile conquest</Text>
+		</Row>
+		<Row Tag="TXT_KEY_GAME_OPTION_TILE_CONQUEST_HELP">
+			<Text>A tile can be captured by military land unit. The tile must be in range of one of the unit owner's cities (6 tiles distance by default)</Text>
+		</Row>
+		<Row Tag="TXT_KEY_GAME_OPTION_DYNHIST_USE_POLICIES">
+			<Text>Cultural Diffusion: Use Policies</Text>
+		</Row>
+		<Row Tag="TXT_KEY_GAME_OPTION_DYNHIST_USE_POLICIES_HELP">
+			<Text>Activated policies can affect culture diffusion and revolution. Uncheck this if you want to use Cultural Diffusion or Revolution with mods that change policies usage. (like NIGHTS)</Text>
+		</Row>
+	</Language_en_US>
+</GameData>
