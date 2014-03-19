@@ -41,8 +41,8 @@ function GetPlotXYFromKey ( plotKey )
 	return x, y
 end
 
-function GetCloseCity ( iPlayer, plot )
-	local pPlayer = Players[iPlayer]
+function GetCloseCity ( PlayerID, plot )
+	local pPlayer = Players[PlayerID]
 	local distance = 1000
 	local closeCity = nil
 	for pCity in pPlayer:Cities() do
@@ -174,8 +174,8 @@ function SaveOnGameMenuCalled()
 end
 --Events.SerialEventGameDataDirty.Add(SaveOnOptionMenuCalled)
 
-function SaveTableOnBarbarianTurn(iplayer)
-	if iplayer == BARBARIAN_PLAYER then
+function SaveTableOnBarbarianTurn(PlayerID)
+	if PlayerID == BARBARIAN_PLAYER then
 		SaveAllTable()
 	end
 end
@@ -229,8 +229,8 @@ end
 -- Database functions 
 --------------------------------------------------------------
 
--- return the first iPlayer using this CivilizationID or MinorcivID
-function GetiPlayerFromCivID (id, bIsMinor, bReportError)
+-- return the first PlayerID using this CivilizationID or MinorcivID
+function GetPlayerIDFromCivID (id, bIsMinor, bReportError)
 	if ( bIsMinor ) then
 		for player_num = GameDefines.MAX_MAJOR_CIVS, GameDefines.MAX_CIV_PLAYERS - 1, 1 do
 			local player = Players[player_num]
@@ -254,53 +254,53 @@ function GetiPlayerFromCivID (id, bIsMinor, bReportError)
 	return false
 end
 
--- return Civ type ID for iPlayer
-function GetCivIDFromiPlayer (iPlayer, bReportError)
-	if (iPlayer ~= -1) then
-		if iPlayer <= GameDefines.MAX_MAJOR_CIVS-1 then
-			local civID = Players[iPlayer]:GetCivilizationType()
+-- return Civ type ID for PlayerID
+function GetCivIDFromPlayerID (PlayerID, bReportError)
+	if (PlayerID ~= -1) then
+		if PlayerID <= GameDefines.MAX_MAJOR_CIVS-1 then
+			local civID = Players[PlayerID]:GetCivilizationType()
 			if (civID ~= -1) then
 				return civID
 			else
-				Dprint ("WARNING : no major civ for iPlayer = " .. iPlayer , bReportError) 
+				Dprint ("WARNING : no major civ for PlayerID = " .. PlayerID , bReportError) 
 				return false
 			end
 		else 
-			local civID = Players[iPlayer]:GetMinorCivType()
+			local civID = Players[PlayerID]:GetMinorCivType()
 			if (civID ~= -1) then
 				return civID
 			else
-				Dprint ("WARNING : no minor civ for iPlayer = " .. iPlayer, bReportError) 
+				Dprint ("WARNING : no minor civ for PlayerID = " .. PlayerID, bReportError) 
 				return false
 			end
 		end
 	else
-		Dprint ("WARNING : trying to find CivType for iPlayer = -1", bReportError) 
+		Dprint ("WARNING : trying to find CivType for PlayerID = -1", bReportError) 
 		return false
 	end
 end
 
-function GetCivTypeFromPlayer (iPlayer, bReportError)
-	if (iPlayer ~= -1) then
-		if iPlayer <= GameDefines.MAX_MAJOR_CIVS-1 then
-			local civID = Players[iPlayer]:GetCivilizationType()
+function GetCivTypeFromPlayer (PlayerID, bReportError)
+	if (PlayerID ~= -1) then
+		if PlayerID <= GameDefines.MAX_MAJOR_CIVS-1 then
+			local civID = Players[PlayerID]:GetCivilizationType()
 			if (civID ~= -1) then
 				return GameInfo.Civilizations[civID].Type
 			else
-				Dprint ("WARNING : no major civ for iPlayer = " .. iPlayer , bReportError) 
+				Dprint ("WARNING : no major civ for PlayerID = " .. PlayerID , bReportError) 
 				return false
 			end
 		else 
-			local civID = Players[iPlayer]:GetMinorCivType()
+			local civID = Players[PlayerID]:GetMinorCivType()
 			if (civID ~= -1) then
 				return GameInfo.MinorCivilizations[civID].Type
 			else
-				Dprint ("WARNING : no minor civ for iPlayer = " .. iPlayer, bReportError) 
+				Dprint ("WARNING : no minor civ for PlayerID = " .. PlayerID, bReportError) 
 				return false
 			end
 		end
 	else
-		Dprint ("WARNING : trying to find CivType for iPlayer = -1", bReportError) 
+		Dprint ("WARNING : trying to find CivType for PlayerID = -1", bReportError) 
 		return false
 	end
 end
@@ -319,16 +319,16 @@ function SetText ( str, tag )
 	--Dprint (query)
 end
 
--- return the first iPlayer using this Civilization or Minorciv type
-function GetiPlayerFromCivType (type, bIsMinor, bReportError)
+-- return the first PlayerID using this Civilization or Minorciv type
+function GetPlayerIDFromCivType (type, bIsMinor, bReportError)
 	if (type) then 
 		local civID = nil
 		if GameInfo.Civilizations[type] then
 			civID = GameInfo.Civilizations[type].ID
-			return GetiPlayerFromCivID (civID, false, bReportError)
+			return GetPlayerIDFromCivID (civID, false, bReportError)
 		elseif GameInfo.MinorCivilizations[type] then
 			civID = GameInfo.MinorCivilizations[type].ID
-			return GetiPlayerFromCivID (civID, true, bReportError)
+			return GetPlayerIDFromCivID (civID, true, bReportError)
 		end
 		Dprint ("WARNING : can't find Player ID for civ Type = " .. type , bReportError) 
 	else	

@@ -85,9 +85,9 @@ function GetCityCulturalOutput ( city, plotKey, cultureMap )
 	local bDebugOutput = true
 
 	Dprint ("-- city at (" .. plotKey.. ") : " .. city:GetName(), bDebugOutput)
-	local iPlayer = city:GetOwner() 
-	local player = Players [ iPlayer ]
-	local ownerCultureID = GetCivTypeFromPlayer (iPlayer)
+	local PlayerID = city:GetOwner() 
+	local player = Players [ PlayerID ]
+	local ownerCultureID = GetCivTypeFromPlayer (PlayerID)
 	local population = city:GetPopulation()
 	local cityCultureProduction = city:GetJONSCulturePerTurn()
 	Dprint (" - "..ownerCultureID .. " cityCultureProduction : " .. cityCultureProduction .. ", population : " .. population, bDebugOutput)
@@ -169,13 +169,13 @@ function UpdatePlotOwnership(cultureMap)
 	Dprint ("Update plot ownership... ", bDebugOutput)
 
 	-- get a dead civ table for checking
-	-- I should have used iPlayer as cultureID, but that would have made this incompatible with my Dynamic History Mod...
+	-- I should have used PlayerID as cultureID, but that would have made this incompatible with my Dynamic History Mod...
 	local deadCivTypes = {}
-	for iPlayer = 0, GameDefines.MAX_CIV_PLAYERS - 1 do
-		local player = Players[iPlayer]
+	for PlayerID = 0, GameDefines.MAX_CIV_PLAYERS - 1 do
+		local player = Players[PlayerID]
 		if ( not player:IsAlive() ) then
 			local bReportError = false					
-			deadType = GetCivTypeFromPlayer (iPlayer, bReportError)
+			deadType = GetCivTypeFromPlayer (PlayerID, bReportError)
 			if (deadType) then
 				Dprint ("   - don't check for : " .. deadType .. ", is dead ", bDebugOutput)
 				table.insert (deadCivTypes, deadType )
@@ -215,13 +215,13 @@ function UpdatePlotOwnership(cultureMap)
 
 					for row in GameInfo.Civilizations() do
 						if row.Type == OwnerType then
-							OwnerID = GetiPlayerFromCivID (row.ID, false)
+							OwnerID = GetPlayerIDFromCivID (row.ID, false)
 						end
 					end
 					if not OwnerID then
 						for row in GameInfo.MinorCivilizations() do
 							if row.Type == OwnerType then
-								OwnerID = GetiPlayerFromCivID (row.ID, true)
+								OwnerID = GetPlayerIDFromCivID (row.ID, true)
 							end
 						end
 					end
@@ -258,7 +258,7 @@ function UpdatePlotOwnership(cultureMap)
 							end	
 						end
 					else
-						--Dprint(" - WARNING : ownership can't be changed to " ..  OwnerType .. " : can't found iPlayer" , bDebugOutput)
+						--Dprint(" - WARNING : ownership can't be changed to " ..  OwnerType .. " : can't found PlayerID" , bDebugOutput)
 					end
 				end
 			end
@@ -632,7 +632,7 @@ end
 -- Those functions load and save the culture map, don't mix them !
 -------------------------------------------------
 
-function CityCultureOnCapture (hexPos, iPlayer, cityID, newiPlayer)
+function CityCultureOnCapture (hexPos, PlayerID, cityID, newPlayerID)
 
 	local pCityPlot = Map.GetPlot( ToGridFromHex( hexPos.x, hexPos.y ) )
 	local cityPlotKey = GetPlotKey(pCityPlot)
@@ -668,7 +668,7 @@ function CityCultureOnCapture (hexPos, iPlayer, cityID, newiPlayer)
 				end
 				-- culture gain for capturing civ
 				local cultureGain = totalCultureLost * CULTURE_GAIN_CONQUEST / 100
-				local conqueror = GetCivTypeFromPlayer(newiPlayer)
+				local conqueror = GetCivTypeFromPlayer(newPlayerID)
 				cultureMap = ChangeCivPlotCulture ( plotKey, cultureMap, conqueror, cultureGain )
 				Dprint (" - " .. conqueror .. " gain ".. cultureGain .." culture at (" .. plotKey.. "), new value = " .. GetCivPlotCulture ( plotKey, cultureMap, conqueror ) , bDebugOutput)
 			end
@@ -737,9 +737,9 @@ function UpdateCultureMap()
 		
 			-- while we're here, remove dead people ownership
 			if ( ALLOW_CIV4_SPREADING ) then
-				local iPlayer = plot:GetOwner()
-				if iPlayer ~= -1 then
-					if ( not Players[iPlayer]:IsAlive() ) then
+				local PlayerID = plot:GetOwner()
+				if PlayerID ~= -1 then
+					if ( not Players[PlayerID]:IsAlive() ) then
 						Dprint ("Removing dead ownership at " .. plotKey , bDebugOutput)
 						plot:SetOwner(-1, -1)
 					end
@@ -783,9 +783,9 @@ function UpdateCultureMap()
 	print("-------------------------------------")
 end
 
-function OnCultureChangePlot(iHexX, iHexY, iPlayer, bUnknown)
+function OnCultureChangePlot(iHexX, iHexY, PlayerID, bUnknown)
 
-	if iPlayer ~= -1 then
+	if PlayerID ~= -1 then
 		local bDebugOutput = false
 		local x, y = ToGridFromHex( iHexX, iHexY )
 		local plotKey = x..","..y
@@ -797,7 +797,7 @@ function OnCultureChangePlot(iHexX, iHexY, iPlayer, bUnknown)
 
 			local cultureMap = MapModData.AH.CultureMap
 			local plotCulture = GetPlotCulture(plotKey, cultureMap)
-			local cultureID = GetCivTypeFromPlayer(iPlayer)
+			local cultureID = GetCivTypeFromPlayer(PlayerID)
 			if (not GetCivPlotCulture ( plotKey, cultureMap, cultureID ) ) and MINIMAL_CULTURE_ON_OWNED_PLOT > 0 then
 				cultureMap = ChangeCivPlotCulture ( plotKey, cultureMap, cultureID, MINIMAL_CULTURE_ON_OWNED_PLOT )
 				MapModData.AH.CultureMap = cultureMap
@@ -830,7 +830,7 @@ function GetCultureValueString(value)
 	return "entrenched"
 end
 
-function UnitCaptureTile(iPlayer, UnitID, x, y)
+function UnitCaptureTile(PlayerID, UnitID, x, y)
 
 	local bDebug = false
 
@@ -848,7 +848,7 @@ function UnitCaptureTile(iPlayer, UnitID, x, y)
 	end
 
 	-- check here if an unit can't capture a tile and return
-	local player = Players[ iPlayer ]
+	local player = Players[ PlayerID ]
 	local unit = player:GetUnitByID(UnitID)
 	if not ( unit:IsCombatUnit() ) then
 		return
@@ -860,7 +860,7 @@ function UnitCaptureTile(iPlayer, UnitID, x, y)
 	local ownerID = plot:GetOwner()
 
 	-- If the unit is moving on another player territory...
-	if (iPlayer ~= ownerID and ownerID ~= -1) then
+	if (PlayerID ~= ownerID and ownerID ~= -1) then
 		Dprint("-------------------------------------", bDebug)
 		Dprint("Unit moving on tile ("..x..","..y..") is in another civ (id="..ownerID..") territory", bDebug)
 
@@ -870,10 +870,10 @@ function UnitCaptureTile(iPlayer, UnitID, x, y)
 
 		-- If we are at war with the other player :
 		if team:IsAtWar( player2:GetTeam() ) then
-			Dprint(" - Unit owner (id="..iPlayer..") and tile owner (id="..ownerID..") are at war", bDebug)
+			Dprint(" - Unit owner (id="..PlayerID..") and tile owner (id="..ownerID..") are at war", bDebug)
 
 			
-			local unitCultureID = GetCivTypeFromPlayer(iPlayer)
+			local unitCultureID = GetCivTypeFromPlayer(PlayerID)
 			local ownerCultureID = GetCivTypeFromPlayer(ownerID)
 
 			local cultureMap = MapModData.AH.CultureMap
@@ -888,10 +888,10 @@ function UnitCaptureTile(iPlayer, UnitID, x, y)
 
 				Dprint(" - Unit is capturing territory...", bDebug)
 				--local capitalCity = player:GetCapitalCity()
-				--plot:SetOwner(iPlayer, capitalCity:GetID() )				
-				local closeCity = GetCloseCity ( iPlayer, plot )					
+				--plot:SetOwner(PlayerID, capitalCity:GetID() )				
+				local closeCity = GetCloseCity ( PlayerID, plot )					
 				if closeCity and (Map.PlotDistance(closeCity:GetX(), closeCity:GetY(), plot:GetX(), plot:GetY()) <= CULTURE_FLIPPING_MAX_DISTANCE) then
-					plot:SetOwner(iPlayer, closeCity:GetID() )
+					plot:SetOwner(PlayerID, closeCity:GetID() )
 
 					lockedMap[plotKey] = LOCKED_TURN_ON_CONQUEST
 
@@ -904,13 +904,13 @@ function UnitCaptureTile(iPlayer, UnitID, x, y)
 			elseif ( ownerID == firstOwner) then
 				Dprint(" - Unit is capturing territory", bDebug)
 				--local capitalCity = player:GetCapitalCity()
-				--plot:SetOwner(iPlayer, capitalCity:GetID() )
+				--plot:SetOwner(PlayerID, capitalCity:GetID() )
 				
-				local closeCity = GetCloseCity ( iPlayer, plot )					
+				local closeCity = GetCloseCity ( PlayerID, plot )					
 				if closeCity then
-					plot:SetOwner(iPlayer, closeCity:GetID() )
+					plot:SetOwner(PlayerID, closeCity:GetID() )
 				else
-					plot:SetOwner(iPlayer, -1 )
+					plot:SetOwner(PlayerID, -1 )
 				end
 			else
 				-- don't free old owner territory if we're at war !
@@ -918,17 +918,17 @@ function UnitCaptureTile(iPlayer, UnitID, x, y)
 				if team:IsAtWar( player3:GetTeam() ) then
 					Dprint(" - Unit is capturing territory, old owner civ (id=".. firstOwner ..") is also at war with unit owner", bDebug)
 					--local capitalCity = player:GetCapitalCity()
-					--plot:SetOwner(iPlayer, capitalCity:GetID() )	
-					plot:SetOwner(iPlayer, -1 )			
+					--plot:SetOwner(PlayerID, capitalCity:GetID() )	
+					plot:SetOwner(PlayerID, -1 )			
 				elseif ( not player3:IsAlive() ) then
 					Dprint(" - Unit is capturing territory, old owner civ (id=".. firstOwner ..") is dead", bDebug)
 					--local capitalCity = player:GetCapitalCity()
-					--plot:SetOwner(iPlayer, capitalCity:GetID() )	
-					local closeCity = GetCloseCity ( iPlayer, plot )
+					--plot:SetOwner(PlayerID, capitalCity:GetID() )	
+					local closeCity = GetCloseCity ( PlayerID, plot )
 					if closeCity then
-						plot:SetOwner(iPlayer, closeCity:GetID() )
+						plot:SetOwner(PlayerID, closeCity:GetID() )
 					else
-						plot:SetOwner(iPlayer, -1 )
+						plot:SetOwner(PlayerID, -1 )
 					end
 				else
 				-- liberating old owner territory
@@ -941,7 +941,7 @@ function UnitCaptureTile(iPlayer, UnitID, x, y)
 						plot:SetOwner(firstOwner, -1 )
 					end					
 					if player3:IsMinorCiv() and not player:IsMinorCiv() then
-						player3:ChangeMinorCivFriendshipWithMajor( iPlayer, LIBERATE_MINOR_TERRITORY_BONUS ) -- give diplo bonus for liberating minor territory
+						player3:ChangeMinorCivFriendshipWithMajor( PlayerID, LIBERATE_MINOR_TERRITORY_BONUS ) -- give diplo bonus for liberating minor territory
 					end
 				end --]]
 			end
